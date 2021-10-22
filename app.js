@@ -17,6 +17,9 @@ app.use('/products', productsRoute)
 const sellersRoute = require('./routes/sellers')
 app.use('/sellers', sellersRoute)
 
+const reviewsRoute = require('./routes/reviews')
+app.use('/reviews', reviewsRoute)
+
 
 //Auth Routes
 // const authRoute = require('./routes/auth')

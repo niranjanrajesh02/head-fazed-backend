@@ -7,18 +7,26 @@ const mongoose = require('mongoose');
 // const verify = require('./privateRoutes')
 // middleware that is specific to this router
 
-// define the home page base for given route (GET ALL POSTS)
+// GET ALL PRODUCTS with pagination
 router.get('/', async (req, res) => {
   try {
-    const products = await Product.find().populate('seller');
-    res.json(products)
+    const { page = 1, limit = 20 } = req.query;
+    const products = await Product.find().populate('seller').populate('reviews')
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    const count = await Product.countDocuments();
+    res.json({
+      products,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    })
   } catch (err) {
     res.json({ message: err })
   }
 })
 
 
-//SUBMIT A POST
+//SUBMIT A PRODUCT
 router.post('/', async (req, res) => {
   // console.log(req.body);
   const { name, description, price, images, sellerID } = req.body;
@@ -40,11 +48,11 @@ router.post('/', async (req, res) => {
 })
 
 
-// GET SPECIFIC POST
-router.get('/:prodID', async (req, res) => {
+// GET SPECIFIC PRODUCT
+router.get('/find/:prodID', async (req, res) => {
   // console.log(req.params.prodID);
   try {
-    const foundProduct = await Product.findById(req.params.prodID).populate('seller')
+    const foundProduct = await Product.findById(req.params.prodID).populate('seller').populate('reviews')
     res.json(foundProduct)
   } catch (err) {
     res.json({ message: err })

@@ -25,7 +25,9 @@ const productSchema = mongoose.Schema({
     type: Date,
     default: Date.now()
   },
-  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' }
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
+  ratings: [Number],
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }]
 })
 
 module.exports = mongoose.model('Product', productSchema);
