@@ -14,6 +14,10 @@ app.use(cors());
 const productsRoute = require('./routes/products')
 app.use('/products', productsRoute)
 
+const sellersRoute = require('./routes/sellers')
+app.use('/sellers', sellersRoute)
+
+
 //Auth Routes
 // const authRoute = require('./routes/auth')
 // app.use('/auth', authRoute)

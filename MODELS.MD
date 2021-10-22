@@ -24,6 +24,6 @@ SELLER
 {
 id: num,
 name: str,  
- products: {[ids of products]},
+products: {[ids of products]},
 date: date
 }
