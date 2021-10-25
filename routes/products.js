@@ -29,14 +29,15 @@ router.get('/', async (req, res) => {
 //SUBMIT A PRODUCT
 router.post('/', async (req, res) => {
   // console.log(req.body);
-  const { name, description, price, images, sellerID } = req.body;
+  const { name, description, price, images, sellerID, categories } = req.body;
   const productToCreate = new Product({
     _id: new mongoose.Types.ObjectId,
     name,
     description,
     price,
     images,
-    seller: sellerID
+    seller: sellerID,
+    categories
   })
   try {
     const savedProduct = await productToCreate.save()
@@ -59,6 +60,17 @@ router.get('/find/:prodID', async (req, res) => {
   }
 })
 
+// GET Products based on category
 
+router.get('/category', async (req, res) => {
+  const { categories } = req.body;
+  if (!categories || categories.length === 0) return (res.json({ message: "Categories needs to be an array of strings." }))
+  try {
+    const foundProducts = await Product.find({ categories: { $all: categories } })
+    res.json(foundProducts)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
 
 module.exports = router

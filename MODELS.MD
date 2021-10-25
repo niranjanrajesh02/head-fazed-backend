@@ -20,7 +20,8 @@ seller: num (relation ID to seller),
 date: date,
 ratings: [num],
 avg_rating: num,
-reviews: [rel ids of reviews]
+reviews: [rel ids of reviews],
+categories: [str]
 }
 
 REVIEW

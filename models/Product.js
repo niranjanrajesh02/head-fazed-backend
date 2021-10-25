@@ -27,7 +27,8 @@ const productSchema = mongoose.Schema({
   },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
   ratings: [Number],
-  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }]
+  reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
+  categories: [String]
 })
 
 module.exports = mongoose.model('Product', productSchema);
