@@ -3,6 +3,8 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 require('dotenv/config')
 const app = express();
+const { auth, requiresAuth } = require('express-openid-connect');
+
 
 //*Middlewares
 //adds ability to read incoming JSON body objects
@@ -20,14 +22,27 @@ app.use('/sellers', sellersRoute)
 const reviewsRoute = require('./routes/reviews')
 app.use('/reviews', reviewsRoute)
 
+const usersRoute = require('./routes/users')
+app.use('/users', usersRoute)
 
-//Auth Routes
-// const authRoute = require('./routes/auth')
-// app.use('/auth', authRoute)
+
+//Auth
+const config = {
+  authRequired: false,
+  routes: { login: false },
+  auth0Logout: true,
+  secret: process.env.SECRET,
+  baseURL: process.env.BASE_URL,
+  clientID: process.env.CLIENT_ID,
+  issuerBaseURL: process.env.ISSUER_BASE_URL
+};
+
+// auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
 
 //ROUTES
 app.get('/', (req, res) => {
-  res.send("At home now lolz")
+  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
 });
 
 //Connect to DB
