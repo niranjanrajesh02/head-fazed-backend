@@ -25,6 +25,40 @@ router.get('/', async (req, res) => {
   }
 })
 
+const handleQuerySort = (query) => {
+  try {
+    // convert the string to look like json object
+    // example "id: -1, name: 1" to "{ "id": -1, "name": 1 }"
+    const toJSONString = ("{" + query + "}").replace(/(\w+:)|(\w+ :)/g, (matched => {
+      return '"' + matched.substring(0, matched.length - 1) + '":';
+    }));
+
+    return JSON.parse(toJSONString);
+  } catch (err) {
+    return JSON.parse("{}"); // parse empty json if the clients input wrong query format
+  }
+}
+
+//Sort results
+//Route: products/sorted?sort=price:-1
+router.get('/sorted', async (req, res) => {
+  const { page = 1, limit = 20 } = req.query;
+  const sort = handleQuerySort(req.query.sort)
+  try {
+    const sortedProducts = await Product.find().sort(sort).populate('seller').populate('reviews')
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+    const count = await Product.countDocuments();
+    res.json({
+      sortedProducts,
+      totalPages: Math.ceil(count / limit),
+      currentPage: page
+    })
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
 
 //SUBMIT A PRODUCT
 router.post('/', async (req, res) => {
