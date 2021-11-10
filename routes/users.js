@@ -22,6 +22,32 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.post('/', async (req, res) => {
+  const { email } = req.body;
+  const UserToCreate = new User({
+    _id: new mongoose.Types.ObjectId,
+    name: email,
+    email
+  })
+  try {
+    const savedUser = await UserToCreate.save();
+    res.json(savedUser);
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+router.get('/find', async (req, res) => {
+  const { emailID } = req.query;
+  try {
+    console.log(emailID);
+    const foundUser = await User.findOne({ email: emailID })
+    res.json(foundUser ? true : false)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
 //route to add product to user's wishlist
 router.post('/wishlist', async (req, res) => {
   const { wishlist_id, user_id } = req.body;

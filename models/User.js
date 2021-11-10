@@ -14,8 +14,6 @@ const userSchema = mongoose.Schema({
   email_verified: Boolean,
   tenant: String,
   connection: String,
-  cart: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-  wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 })
 
 module.exports = mongoose.model('User', userSchema);
