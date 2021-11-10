@@ -3,6 +3,7 @@ const router = express.Router()
 const Wishlist = require('../models/Wishlist')
 const User = require('../models/User')
 const mongoose = require('mongoose');
+const Product = require('../models/Product');
 
 router.get('/', async (req, res) => {
   const { u_id } = req.body;
@@ -42,6 +43,26 @@ router.post('/', async (req, res) => {
     else {
       res.json({ message: "User not found" })
     }
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+
+router.patch('/', async (req, res) => {
+  const { wishlist_id, product_id } = req.body;
+  try {
+    const wishlistUpdated = await Wishlist.findByIdAndUpdate(
+      wishlist_id,
+      { $push: { products: product_id } },
+      { new: true }
+    )
+    const productUpdated = await Product.findByIdAndUpdate(
+      product_id,
+      { $push: { wishlisted: wishlist_id } },
+      { new: true }
+    )
+    res.json({ wishlistUpdated, productUpdated })
   } catch (err) {
     res.json({ message: err })
   }

@@ -28,6 +28,7 @@ const productSchema = mongoose.Schema({
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
   ratings: [Number],
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
+  wishlisted: [String],
   categories: [String]
 })
 
