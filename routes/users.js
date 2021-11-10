@@ -23,11 +23,11 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', async (req, res) => {
-  const { email } = req.body;
+  const { email, username } = req.body;
   const UserToCreate = new User({
     _id: new mongoose.Types.ObjectId,
-    name: email,
-    email
+    username: username,
+    email: email
   })
   try {
     const savedUser = await UserToCreate.save();
@@ -40,7 +40,6 @@ router.post('/', async (req, res) => {
 router.get('/find', async (req, res) => {
   const { emailID } = req.query;
   try {
-    console.log(emailID);
     const foundUser = await User.findOne({ email: emailID })
     res.json(foundUser ? true : false)
   } catch (err) {

@@ -5,19 +5,13 @@ require('dotenv/config')
 const app = express();
 const { auth, requiresAuth } = require('express-openid-connect');
 
-var allowCrossDomain = function (req, res, next) {
-  res.header('Access-Control-Allow-Origin', "*");
-  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.header('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-}
+
 //*Middlewares
 //adds ability to read incoming JSON body objects
 app.use(express.json());
 //CORS Policy
 app.use(cors());
 
-app.use(allowCrossDomain);
 
 //Import Route MW
 const productsRoute = require('./routes/products')
@@ -31,6 +25,12 @@ app.use('/reviews', reviewsRoute)
 
 const usersRoute = require('./routes/users')
 app.use('/users', usersRoute)
+
+const cartRoute = require('./routes/cart')
+app.use('/cart', cartRoute)
+
+const wishlistRoute = require('./routes/wishlist')
+app.use('/wishlist', wishlistRoute)
 
 
 //Auth
