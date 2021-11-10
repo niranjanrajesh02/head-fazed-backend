@@ -21,14 +21,14 @@ date: date,
 ratings: [num],
 avg_rating: num,
 reviews: [rel ids of reviews],
-categories: [str]
+categories: [str],
+wishlisted: int of number of users wishlisted
 }
 
 REVIEW
 {
 id: num,
-user_id: rel id of user,
-user_name: name of user,
+user: rel id of user,
 product: rel id of product,
 review_text: str,
 rating: num,
@@ -42,4 +42,17 @@ name: str,
 products: {[ids of products]},
 date: date,
 logo: str
+}
+
+CART
+{
+user: rel id of usr,
+products: [rel id of products],
+total_val: int
+}
+
+WISHLIST
+{
+user: rel id of user,
+products: [rel id of products]
 }
