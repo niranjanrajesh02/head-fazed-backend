@@ -10,16 +10,17 @@ const mongoose = require('mongoose');
 // GET ALL PRODUCTS with pagination
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 20 } = req.query;
     const products = await Product.find().populate('seller').populate('reviews')
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-    const count = await Product.countDocuments();
-    res.json({
-      products,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page
-    })
+    res.json(products)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+router.get('/collection/:collectionQuery', async (req, res) => {
+  try {
+    const collection = await Product.find({ categories: req.params.collectionQuery });
+    res.json(collection)
   } catch (err) {
     res.json({ message: err })
   }
@@ -63,11 +64,12 @@ router.get('/sorted', async (req, res) => {
 //SUBMIT A PRODUCT
 router.post('/', async (req, res) => {
   // console.log(req.body);
-  const { name, description, price, images, sellerID, categories } = req.body;
+  const { name, short_description, long_description, price, images, sellerID, categories } = req.body;
   const productToCreate = new Product({
     _id: new mongoose.Types.ObjectId,
     name,
-    description,
+    short_description,
+    long_description,
     price,
     images,
     seller: sellerID,
@@ -94,17 +96,5 @@ router.get('/find/:prodID', async (req, res) => {
   }
 })
 
-// GET Products based on category
-
-router.get('/category', async (req, res) => {
-  const { categories } = req.body;
-  if (!categories || categories.length === 0) return (res.json({ message: "Categories needs to be an array of strings." }))
-  try {
-    const foundProducts = await Product.find({ categories: { $all: categories } })
-    res.json(foundProducts)
-  } catch (err) {
-    res.json({ message: err })
-  }
-})
 
 module.exports = router

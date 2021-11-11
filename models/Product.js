@@ -8,11 +8,13 @@ const productSchema = mongoose.Schema({
     min: 6,
     max: 255
   },
-  description: {
+  short_description: {
     type: String,
-    required: true,
-    min: 6,
-    max: 1024
+    required: true
+  },
+  long_description: {
+    type: String,
+    required: true
   },
   price: {
     type: Number,
@@ -29,7 +31,10 @@ const productSchema = mongoose.Schema({
   ratings: [Number],
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
   wishlisted: [String],
-  categories: [String]
+  categories: {
+    type: [String],
+    enum: ["audio-technica", "jbl", "razer", "skullcandy", "sony", "casual", "studio", "audiophile", "gaming", "wired", "wireless", "over-ear", "in-ear", "cables", "cases", "amps", "speakers"]
+  }
 })
 
 module.exports = mongoose.model('Product', productSchema);

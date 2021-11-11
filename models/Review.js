@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const reviewSchema = mongoose.Schema({
   _id: mongoose.Schema.Types.ObjectId,
-  // userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-  user_name: String,
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  userName: String,
   date: {
     type: Date,
     default: Date.now()
@@ -11,14 +11,11 @@ const reviewSchema = mongoose.Schema({
   productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
   reviewTitle: {
     type: String,
-    min: 3,
-    max: 60,
     required: true
   },
   reviewText: {
     type: String,
-    min: 3,
-    max: 2048
+    required: true
   },
   rating: {
     type: Number,
