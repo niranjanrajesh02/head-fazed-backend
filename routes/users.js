@@ -4,19 +4,21 @@ const User = require('../models/User')
 const mongoose = require('mongoose');
 const Product = require('../models/Product');
 
-// GET ALL USERS with pagination
+// GET ALL USERS 
 router.get('/', async (req, res) => {
   try {
-    const { page = 1, limit = 20 } = req.query;
     const users = await User.find().populate('wishlist').populate('cart')
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-    const count = await User.countDocuments();
-    res.json({
-      users,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page
-    })
+    res.json(users)
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
+
+// GET ONE USER 
+router.get('/:emailID', async (req, res) => {
+  try {
+    const user = await User.findOne({ email: req.params.emailID }).populate('wishlist').populate('cart')
+    res.json(user)
   } catch (err) {
     res.json({ message: err })
   }

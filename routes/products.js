@@ -4,14 +4,34 @@ const Product = require('../models/Product')
 const Seller = require('../models/Seller')
 const mongoose = require('mongoose');
 
-// const verify = require('./privateRoutes')
-// middleware that is specific to this router
+
+const handleQuerySort = (query) => {
+  try {
+    // convert the string to look like json object
+    // example "id: -1, name: 1" to "{ "id": -1, "name": 1 }"
+    const toJSONString = ("{" + query + "}").replace(/(\w+:)|(\w+ :)/g, (matched => {
+      return '"' + matched.substring(0, matched.length - 1) + '":';
+    }));
+    return JSON.parse(toJSONString);
+  } catch (err) {
+    return JSON.parse("{}"); // parse empty json if the clients input wrong query format
+  }
+}
 
 // GET ALL PRODUCTS with pagination
 router.get('/', async (req, res) => {
+  const { sort = null } = req.query;
   try {
-    const products = await Product.find().populate('seller').populate('reviews')
-    res.json(products)
+    if (!sort) {
+      const products = await Product.find()
+      res.json(products)
+    }
+    else {
+      const sortObj = handleQuerySort(sort);
+      console.log(sortObj);
+      const sortedProducts = await Product.find().sort(sortObj)
+      res.json(sortedProducts)
+    }
   } catch (err) {
     res.json({ message: err })
   }
@@ -26,35 +46,15 @@ router.get('/collection/:collectionQuery', async (req, res) => {
   }
 })
 
-const handleQuerySort = (query) => {
-  try {
-    // convert the string to look like json object
-    // example "id: -1, name: 1" to "{ "id": -1, "name": 1 }"
-    const toJSONString = ("{" + query + "}").replace(/(\w+:)|(\w+ :)/g, (matched => {
-      return '"' + matched.substring(0, matched.length - 1) + '":';
-    }));
 
-    return JSON.parse(toJSONString);
-  } catch (err) {
-    return JSON.parse("{}"); // parse empty json if the clients input wrong query format
-  }
-}
 
 //Sort results
 //Route: products/sorted?sort=price:-1
 router.get('/sorted', async (req, res) => {
-  const { page = 1, limit = 20 } = req.query;
   const sort = handleQuerySort(req.query.sort)
   try {
-    const sortedProducts = await Product.find().sort(sort).populate('seller').populate('reviews')
-      .limit(limit * 1)
-      .skip((page - 1) * limit);
-    const count = await Product.countDocuments();
-    res.json({
-      sortedProducts,
-      totalPages: Math.ceil(count / limit),
-      currentPage: page
-    })
+    const sortedProducts = await Product.find().sort(sort)
+    res.json(sortedProducts)
   } catch (err) {
     res.json({ message: err })
   }
@@ -73,7 +73,8 @@ router.post('/', async (req, res) => {
     price,
     images,
     seller: sellerID,
-    categories
+    categories,
+    avg_rating: 0
   })
   try {
     const savedProduct = await productToCreate.save()

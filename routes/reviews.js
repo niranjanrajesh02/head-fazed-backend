@@ -17,8 +17,7 @@ router.get('/', async (req, res) => {
     res.json({ message: err })
   }
 })
-
-
+const average = arr => arr.reduce((p, c) => p + c, 0) / arr.length;
 //SUBMIT A REVIEW
 router.post('/', async (req, res) => {
   // console.log(req.body);
@@ -33,16 +32,35 @@ router.post('/', async (req, res) => {
       productId,
       rating
     })
-    console.log(reviewToCreate);
     const savedReview = await reviewToCreate.save()
-    await Product.findByIdAndUpdate(productId, { $push: { ratings: rating, reviews: reviewToCreate._id } })
+    const reviewewdProduct = await Product.findByIdAndUpdate(productId, { $push: { ratings: rating, reviews: reviewToCreate._id } }, { new: true });
+    let averageRating = 0;
+    if (reviewewdProduct.ratings.length > 0) {
+      averageRating = average(reviewewdProduct.ratings).toFixed(2);
+      const updatedProduct = await Product.findByIdAndUpdate(productId, { avg_rating: averageRating }, { new: true });
+      console.log(updatedProduct);
+    }
     res.json(savedReview);
-
   } catch (err) {
     res.json({ message: err })
   }
 })
 
+router.get('/testRatings', async (req, res) => {
+  try {
+    const ourProduct = await Product.findById("618c46627d71813b2103579d");
+    let averageRating = 0;
+    if (ourProduct.ratings.length > 0) {
+      averageRating = average(ourProduct.ratings).toFixed(2);
+      const updatedProduct = await Product.findByIdAndUpdate("618c46627d71813b2103579d", { avg_rating: averageRating }, { new: true });
+      console.log(updatedProduct);
+    }
+    console.log(averageRating);
+    res.json("TEST")
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
 
 
 

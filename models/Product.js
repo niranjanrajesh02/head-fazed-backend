@@ -29,6 +29,11 @@ const productSchema = mongoose.Schema({
   },
   seller: { type: mongoose.Schema.Types.ObjectId, ref: 'Seller' },
   ratings: [Number],
+  avg_rating: {
+    type: Number,
+    min: 0,
+    max: 5
+  },
   reviews: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Review' }],
   wishlisted: [String],
   categories: {
