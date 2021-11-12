@@ -21,7 +21,8 @@ const reviewSchema = mongoose.Schema({
     type: Number,
     min: 0,
     max: 5
-  }
+  },
+  verified: Boolean
 })
 
 module.exports = mongoose.model('Review', reviewSchema);

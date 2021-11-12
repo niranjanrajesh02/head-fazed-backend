@@ -5,10 +5,9 @@ const User = require('../models/User')
 const Product = require('../models/Product')
 const mongoose = require('mongoose');
 
-router.get('/', async (req, res) => {
-  const { u_id } = req.body;
+router.get('/:userid', async (req, res) => {
   try {
-    const foundCart = await Cart.findOne({ user_id: u_id })
+    const foundCart = await Cart.findOne({ user_id: req.params.userid })
     res.json(foundCart)
   } catch (err) {
     res.json({ message: err })
@@ -72,26 +71,16 @@ router.patch('/', async (req, res) => {
     }
     else {
       if (action === "cQuantity") {
-        if (quantity === 0) {
-
-          foundCart.products.splice(itemIndex, 1);
-          let sum = 0;
-          foundCart.products.forEach(p => sum += (p.price * p.quantity))
-          foundCart.total_val = sum;
-          const updatedCart = await foundCart.save();
-          res.json(updatedCart);
-        }
-        else {
-          let productItem = foundCart.products[itemIndex];
-          productItem.quantity = quantity;
-          foundCart.products[itemIndex] = productItem;
-          let sum = 0;
-          foundCart.products.forEach(p => sum += (p.price * p.quantity))
-          foundCart.total_val = sum;
-          const updatedCart = await foundCart.save();
-          res.json(updatedCart)
-        }
+        let productItem = foundCart.products[itemIndex];
+        productItem.quantity = quantity;
+        foundCart.products[itemIndex] = productItem;
+        let sum = 0;
+        foundCart.products.forEach(p => sum += (p.price * p.quantity))
+        foundCart.total_val = sum;
+        const updatedCart = await foundCart.save();
+        res.json(updatedCart)
       }
+
       else if (action === "remove") {
         foundCart.products.splice(itemIndex, 1);
         let sum = 0;

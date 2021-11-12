@@ -14,6 +14,7 @@ const userSchema = mongoose.Schema({
   email_verified: Boolean,
   tenant: String,
   connection: String,
+  orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
   wishlist: { type: mongoose.Schema.Types.ObjectId, ref: 'Wishlist' }
 })

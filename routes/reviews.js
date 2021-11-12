@@ -2,7 +2,8 @@ const express = require('express')
 const router = express.Router()
 const Product = require('../models/Product')
 const Review = require('../models/Review')
-const User = require('../models/User')
+const Order = require('../models/Order')
+
 const mongoose = require('mongoose');
 
 // const verify = require('./privateRoutes')
@@ -23,6 +24,17 @@ router.post('/', async (req, res) => {
   // console.log(req.body);
   const { reviewTitle, productId, reviewText, rating, userId, userName } = req.body;
   try {
+    const matchedOrders = await Order.find({ user: userId })
+    let verified = false;
+    if (matchedOrders) {
+      matchedOrders.forEach((order) => (
+        order.products.forEach((product) => {
+          if (product.productId === productId) {
+            verified = true
+          }
+        })
+      ))
+    }
     const reviewToCreate = new Review({
       _id: new mongoose.Types.ObjectId,
       reviewTitle,
@@ -30,7 +42,8 @@ router.post('/', async (req, res) => {
       userId,
       userName,
       productId,
-      rating
+      rating,
+      verified
     })
     const savedReview = await reviewToCreate.save()
     const reviewewdProduct = await Product.findByIdAndUpdate(productId, { $push: { ratings: rating, reviews: reviewToCreate._id } }, { new: true });
@@ -38,7 +51,6 @@ router.post('/', async (req, res) => {
     if (reviewewdProduct.ratings.length > 0) {
       averageRating = average(reviewewdProduct.ratings).toFixed(2);
       const updatedProduct = await Product.findByIdAndUpdate(productId, { avg_rating: averageRating }, { new: true });
-      console.log(updatedProduct);
     }
     res.json(savedReview);
   } catch (err) {
@@ -46,20 +58,20 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.get('/testRatings', async (req, res) => {
-  try {
-    const ourProduct = await Product.findById("618c46627d71813b2103579d");
-    let averageRating = 0;
-    if (ourProduct.ratings.length > 0) {
-      averageRating = average(ourProduct.ratings).toFixed(2);
-      const updatedProduct = await Product.findByIdAndUpdate("618c46627d71813b2103579d", { avg_rating: averageRating }, { new: true });
-      console.log(updatedProduct);
-    }
-    console.log(averageRating);
-    res.json("TEST")
-  } catch (err) {
-    res.json({ message: err })
+router.post('/testVerified', async (req, res) => {
+  const { reviewTitle, productId, reviewText, rating, userId, userName } = req.body;
+  const matchedOrders = await Order.find({ user: userId })
+  let verified = false;
+  if (matchedOrders) {
+    matchedOrders.forEach((order) => (
+      order.products.forEach((product) => {
+        if (product.productId === productId) {
+          verified = true
+        }
+      })
+    ))
   }
+  res.json({ matchedOrders, verified })
 })
 
 

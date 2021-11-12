@@ -32,25 +32,14 @@ app.use('/cart', cartRoute)
 const wishlistRoute = require('./routes/wishlist')
 app.use('/wishlist', wishlistRoute)
 
+const ordersRoute = require('./routes/orders')
+app.use('/orders', ordersRoute)
 
-//Auth
-const config = {
-  authRequired: false,
-  routes: { login: false },
-  auth0Logout: true,
-  secret: process.env.SECRET,
-  baseURL: process.env.BASE_URL,
-  clientID: process.env.CLIENT_ID,
-  issuerBaseURL: process.env.ISSUER_BASE_URL
-};
 
-// auth router attaches /login, /logout, and /callback routes to the baseURL
-app.use(auth(config));
+
 
 //ROUTES
-app.get('/', (req, res) => {
-  res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
-});
+
 
 //Connect to DB
 mongoose.connect(process.env.DB_CONNECTION, () => {
