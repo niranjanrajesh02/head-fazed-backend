@@ -61,6 +61,15 @@ router.post('/wishlist', async (req, res) => {
   }
 })
 
+//route to edit profile details
+
+router.patch('/details', async (req, res) => {
+  const { username, contact_no, shipping_add, user_id } = req.body;
+  const foundUser = await User.findByIdAndUpdate(user_id, { username, contact_no, shipping_add }, { new: true });
+  res.json(foundUser);
+
+})
+
 //route to add product to user's cart
 router.post('/cart', async (req, res) => {
   const { cart_id, user_id } = req.body;

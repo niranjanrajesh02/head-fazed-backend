@@ -16,7 +16,9 @@ const userSchema = mongoose.Schema({
   connection: String,
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
   cart: { type: mongoose.Schema.Types.ObjectId, ref: 'Cart' },
-  wishlist: { type: mongoose.Schema.Types.ObjectId, ref: 'Wishlist' }
+  wishlist: { type: mongoose.Schema.Types.ObjectId, ref: 'Wishlist' },
+  contact_no: Number,
+  shipping_add: String,
 })
 
 module.exports = mongoose.model('User', userSchema);
