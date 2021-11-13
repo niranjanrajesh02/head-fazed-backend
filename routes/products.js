@@ -40,7 +40,7 @@ router.get('/', async (req, res) => {
       const filteredProducts = await Product.find({
         price: { $lte: maxPrice, $gte: minPrice },
         avg_rating: { $gte: minStars }
-      }).sort(sortObj);
+      }).sort(sortObj).populate('seller');
       res.json(filteredProducts)
     }
     else {
@@ -48,7 +48,7 @@ router.get('/', async (req, res) => {
         categories: cid,
         price: { $lte: maxPrice, $gte: minPrice },
         avg_rating: { $gte: minStars }
-      }).sort(sortObj);
+      }).sort(sortObj).populate('seller');
       res.json(filteredCollection)
     }
   } catch (err) {
@@ -123,5 +123,15 @@ router.get('/find/:prodID', async (req, res) => {
   }
 })
 
+router.get('/recommended/:prodID', async (req, res) => {
+  try {
+    const foundProduct = await Product.findById(req.params.prodID).populate('seller');
+    // console.log(foundProduct.categories[0]);
+    const recommendedProducts = await Product.find({ categories: foundProduct.categories[0] }).limit(3);
+    res.json(recommendedProducts);
+  } catch (err) {
+    res.json({ message: err })
+  }
+})
 
 module.exports = router
