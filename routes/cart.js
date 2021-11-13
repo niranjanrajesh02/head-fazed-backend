@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
         total_val: 0
       })
       savedCart = cartToCreate.save()
-      await User.findByIdAndUpdate(u_id, { $push: { cart: cartToCreate._id } })
+      await User.findByIdAndUpdate(u_id, { cart: cartToCreate._id })
       res.json(cartToCreate)
     }
     else {
